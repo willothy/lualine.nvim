@@ -6,6 +6,7 @@ local M = lualine_require.require('lualine.component'):extend()
 local default_options = {
     -- default, us, uk, iso, or format (ex. "%d/%m/%Y ...")
     style = 'default',
+    trim_hour_leading_zero = true,
 }
 
 function M:init(options)
@@ -25,7 +26,15 @@ function M:update_status()
         fmt = '%Y-%m-%d'
     end
 
-    return os.date(fmt)
+
+    if self.options.trim_leading_zeroes then
+        fmt = fmt:gsub('%%H', os.date('%H'):gsub("0(%d)", "%1"))
+        fmt = fmt:gsub('%%I', os.date('%I'):gsub("0(%d)", "%1"))
+    end
+
+    local date = os.date(fmt)
+
+    return date
 end
 
 return M
